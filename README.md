@@ -1,4 +1,4 @@
-### C++ minor projects
+# C++ minor projects
 Prepared for programming basics. Instructions can be found in PDF format in the subdirectories.
 
 ## 01-poker
