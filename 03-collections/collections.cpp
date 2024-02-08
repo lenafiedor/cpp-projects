@@ -1,6 +1,3 @@
-// autor: Lena Fiedor
-// tytul: zbiory
-
 #include <iostream>
 using namespace std;
 

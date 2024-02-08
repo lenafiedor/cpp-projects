@@ -1,6 +1,3 @@
-// autor: Lena Fiedor
-// tytul: tablice
-
 #include <iostream>
 using namespace std;
 int main () {

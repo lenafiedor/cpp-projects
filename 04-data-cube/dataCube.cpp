@@ -1,6 +1,3 @@
-// autor: Lena Fiedor
-// tytul: szescian_danych
-
 #include <iostream>
 using namespace std;
 

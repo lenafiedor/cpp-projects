@@ -1,6 +1,3 @@
-// autor: Lena Fiedor
-// tytul: sklad
-
 #include <iostream>
 using namespace std;
 
