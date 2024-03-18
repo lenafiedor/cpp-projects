@@ -1,11 +1,6 @@
-/*
-autor: Lena Fiedor
-tytuł: main
-*/
-
 #include <iostream>
 #include <string>
-#include "kod.cpp"
+#include "source.cpp"
 
 using namespace std;
 
