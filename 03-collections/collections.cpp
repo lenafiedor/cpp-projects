@@ -1,377 +1,300 @@
 #include <iostream>
 using namespace std;
 
-void List ( int tab[], int roz ) {
-    for ( int i = 0; i < roz; i++ ) {
-        cout << tab[i] << " ";
-    }
-    cout << "" << endl;
+
+static short int MAX_SIZE = 4095;
+
+
+bool isValid(int number) {
+    return number > 0 && number <= MAX_SIZE;
 }
 
-void Sort ( int tab[], int roz ) {
-    int help;
-    int i = roz - 1;
-    bool change = true;
-    while ( change == true ) {
-        change = false;
-        while ( i > 0 ) {
-            if ( tab[i] < tab[i-1] ) {
-                help = tab[i];
-                tab[i] = tab[i-1];
-                tab[i-1] = help;
-                change = true;
+int find_size(int array[]) {
+    return sizeof(array) / sizeof(array[0]);
+}
+
+void List(int array[], int size) {
+    for (int i = 0; i < size; i++) {
+        cout << array[i] << " ";
+    }
+    cout << endl;
+}
+
+void bubbleSort(int array[], int size) {
+    bool swapped;
+    for (int i = 0; i < size - 1; i++) {
+        swapped = false;
+        for (int j = 0; j < size - i - 1; j++) {
+            if (array[j] > array[j + 1]) {
+                int temp = array[j];
+                array[j] = array[j + 1];
+                array[j + 1] = temp;
+                swapped = true;
             }
-            i--;
         }
-        i = roz - 1;
+        if (!swapped) break;
     }
 }
 
-void Add ( int liczba, int tab[] ) {
-    if ( liczba >= 1 && liczba <= 4095 ) {
-        int roz;
-        int i = 0;
-        bool cond = false;
-        while ( tab[i] != -1 ) {
-            i++;
-        }
-        roz = i;
-        for ( int k = 0; k <= roz; k++ ) {
-            if ( tab[k] == liczba ) {
-                cond = true;
+void Add(int number, int array[]) {
+
+    if (isValid(number)) {
+        int size = find_size(array);
+
+        for (int i = 0; i < size; i++) {
+            if (array[i] == number) {
                 break;
             }
-        }
-        if ( cond == false ) {
-            tab[roz] = liczba;
-            tab[roz+1] = -1;
-            Sort ( tab, roz + 1 );
+            if (i == size - 1) {
+                array[size] = number;
+                array[size+1] = -1;
+                bubbleSort(array, size + 1);
+            }
         }
     }
 }
 
-void Create ( int ile, int tab1[], int tab2[] ) {
-	int k = 0;
-	tab2[0] = -1;
-	for ( int i = 0; i < ile; i++  ) {
-		if ( tab1[i] >= 1 && tab1[i] <= 4095 ) {
-			int roz;
-			int j = 0;
-			bool cond = false;
-			while ( tab2[j] != -1 ) {
-			    j++;
-			}
-        	roz = j;
-			for ( k = 0; k <= roz; k++ ) {
-	            if ( tab2[k] == tab1[i] ) {
-	                cond = true;
+void Create(int sizeFirst, int tabFirst[], int tabSec[]) {
+
+    int sizeSec = find_size(tabSec);
+
+	for (int i = 0; i < sizeFirst; i++) {
+		if (isValid(tabFirst[i])) {
+			for (int j = 0; j < sizeSec; j++) {
+	            if (tabSec[j] == tabSec[i]) {
 	                break;
-	            }
+                }
+                if (j == sizeSec - 1) {
+                    tabSec[sizeSec] = tabFirst[i];
+                    tabSec[sizeSec+1] = -1;
+                }
 			}
-        	if ( cond == false ) {
-            	tab2[roz] = tab1[i];
-            	tab2[roz+1] = -1;
-        	}
 		}
 	}
-	Sort ( tab2, k );
+	bubbleSort(tabSec, sizeSec);
 }
 
-void Union ( int tab1[], int tab2[], int tab3[] ) {
-    int roz1;
-    int roz2;
-    int i = 0;
-    int j = 0;
-    int k = 0;
-    bool cond = false;
-    while ( tab1[i] != -1 ) {
-        i++;
-    }
-    roz1 = i;
-    while ( tab2[j] != -1 ) {
-        j++;
-    }
-    roz2 = j;
-    tab3[0] = -1;
-    for ( i = 0; i < roz1; i++, k++ ) {
-        tab3[i] = tab1[i];
-        tab3[i+1] = -1;
+void Union(int tabFirst[], int tabSec[], int result[]) {
+
+    int sizeFirst = find_size(tabFirst);
+    int sizeSec = find_size(tabSec);
+
+    for (int i = 0; i < sizeFirst; i++) {
+        result[i] = result[i];
+        result[i+1] = -1;
 	}
-    for ( i = 0; i < roz2; i++ ) {
-        for ( j = 0; j <= k; j++ ) {
-            if ( tab3[j] == tab2[i] ) {
-                cond = true;
+
+    int sizeThird = find_size(result);
+
+    for (int i = 0; i < sizeSec; i++) {
+        for (int j = 0; j <= sizeThird; j++) {
+            if (result[j] == tabSec[i] ) {
+                break;
+            }
+            if (j == sizeThird - 1) {
+                result[j] = tabSec[i];
+                result[j+1] = -1;
             }
         }
-        if ( cond == false ) {
-            tab3[k] = tab2[i];
-            tab3[k+1] = -1;
-            k++;
-        }
-        cond = false;
     }
-    Sort ( tab3, k );
+    bubbleSort(result, sizeThird);
 }
 
-void Intersection ( int tab1[], int tab2[], int tab3[] ) {
+void Intersection(int tabFirst[], int tabSec[], int result[]) {
     int k = 0;
-    tab3[0] = -1;
-    for ( int i = 0; tab1[i] != -1; i++ ) {
-        for ( int j = 0; tab2[j] != -1; j++ ) {
-            if ( tab1[i] == tab2[j] ) {
-                tab3[k] = tab1[i];
-                tab3[k+1] = -1;
-                k++;
+    for (int i = 0; tabFirst[i] != -1; i++) {
+        for (int j = 0; tabSec[j] != -1; j++) {
+            if (tabFirst[i] == tabSec[j]) {
+                result[k] = result[i];
+                result[k++] = -1;
             }
         }
     }
-    Sort ( tab3, k );
+    bubbleSort(result, k);
 }
 
-void Difference ( int tab1[], int tab2[], int tab3[] ) {
-    int k = 0;
-    bool cond = true;
-    tab3[0] = -1;
-    for ( int i = 0; tab1[i] != -1; i++ ) {
-        for ( int j = 0; tab2[j] != -1; j++ ) {
-            if ( tab1[i] == tab2[j] ) {
-                cond = false;
-            }
-        }
-        if ( cond == true ) {
-            tab3[k] = tab1[i];
-            tab3[k+1] = -1;
-            k++;
-        }
-        cond = true;
-    }
-    Sort ( tab3, k );
-}
+void Difference(int tabFirst[], int tabSec[], int result[]) {
 
-void Symmetric ( int tab1[], int tab2[], int tab3[] ) {
     int k = 0;
     bool cond = true;
-    tab3[0] = -1;
-    for ( int i = 0; tab1[i] != -1; i++ ) {
-        for ( int j = 0; tab2[j] != -1; j++ ) {
-            if ( tab1[i] == tab2[j] ) {
-                cond = false;
+    int sizeSec = find_size(tabSec);
+
+    for (int i = 0; tabFirst[i] != -1; i++) {
+        for (int j = 0; tabSec[j] != -1; j++) {
+            if (tabFirst[i] == tabSec[j]) {
+                break;
+            }
+            if (j == sizeSec - 1) {
+                result[k] = tabFirst[i];
+                result[k++] = -1;
             }
         }
-        if ( cond == true ) {
-            tab3[k] = tab1[i];
-            tab3[k+1] = -1;
-            k++;
-        }
-        cond = true;
     }
-    for ( int i = 0; tab2[i] != -1; i++ ) {
-        for ( int j = 0; tab1[j] != -1; j++ ) {
-            if ( tab2[i] == tab1[j] ) {
-                cond = false;
+    bubbleSort(result, k);
+}
+
+void Symmetric(int tabFirst[], int tabSec[], int result[]) {
+
+    int k = 0;
+    int sizeFirst = find_size(tabFirst);
+    int sizeSec = find_size(tabSec);
+
+    for (int i = 0; tabFirst[i] != -1; i++) {
+        for (int j = 0; tabSec[j] != -1; j++) {
+            if (tabFirst[i] == tabSec[j]) {
+                break;
+            }
+            if (j == sizeSec - 1) {
+                result[k] = tabFirst[i];
+                result[k++] = -1;
+            }
+        }
+    }
+
+    for (int i = 0; tabSec[i] != -1; i++ ) {
+        for (int j = 0; tabFirst[j] != -1; j++) {
+            if (tabSec[i] == tabFirst[j] ) {
+                break;
+            }
+            if (j == sizeFirst - 1) {
+                result[k] = tabSec[i];
+                result[k++] = -1;
+            }
+        }
+    }
+    bubbleSort(result, k);
+}
+
+void Complement(int array[], int result[]) {
+
+    int k = 0;
+    int size = find_size(array);
+
+    for (int u = 1; u <= MAX_SIZE; u++) {
+        for (int i = 0; array[i] != -1; i++) {
+            if (array[i] == u) {
+                break;
+            }
+            if (i == size - 1) {
+                result[k] = array[i];
+                result[k++] = -1;
+            }
+        }
+    }
+}
+
+bool Subset(int tabFirst[], int tabSec[]) {
+
+    if (find_size(tabFirst) == 0) {
+        return true;
+    }
+
+    for (int i = 0; tabFirst[i] != -1; i++) {
+
+        bool found = false;
+
+        for (int j = 0; tabSec[j] != -1; j++) {
+            if (tabFirst[i] == tabSec[j]) {
+                found = true;
                 break;
             }
         }
-        if ( cond == true ) {
-            tab3[k] = tab2[i];
-            tab3[k+1] = -1;
-            k++;
-        }
-        cond = true;
-    }
-    Sort ( tab3, k );
-}
-
-void Complement ( int tab1[], int tab2[] ) {
-    int k = 0;
-    bool cond = true;
-    tab2[0] = -1;
-    for ( int u = 1; u <= 4095; u++ ) {
-        for ( int i = 0; tab1[i] != -1; i++ ) {
-            if ( tab1[i] == u ) {
-                cond = false;
-            }
-        }
-        if ( cond == true ) {
-            tab2[k] = u;
-            tab2[k+1] = -1;
-            k++;
-        }
-        cond = true;
-    }
-}
-
-bool Subset ( int tab1[], int tab2[] ) {
-    bool cond = false;
-    if ( tab1[0] == -1 ) {
-        cond = true;
-    }
-    else {
-        for ( int i = 0; tab1[i] != -1; i++ ) {
-            for ( int j = 0; tab2[j] != -1; j++ ) {
-                if ( tab1[i] == tab2[j] ) {
-                    cond = true;
-                    break;
-                }
-                else {
-                    cond = false;
-                }
-            }
-            if ( cond == false ) {
-                break;
-            }
-        }
-    }
-    return cond;
-}
-
-bool Equal ( int tab1[], int tab2[] ) {
-    int roz1;
-    int roz2;
-    int i = 0;
-    int j = 0;
-    bool cond = false;
-    while ( tab1[i] != -1 ) {
-        i++;
-    }
-    roz1 = i;
-    while ( tab2[j] != -1 ) {
-        j++;
-    }
-    roz2 = j;
-    if ( i == j ) {
-        if ( Subset ( tab1, tab2 ) == true ) {
-            return true;
-        }
-        else {
+        if (!found) {
             return false;
         }
     }
-    else {
-        return false;
-    }
+    return true;
 }
 
-bool Empty ( int tab[] ) {
-    if ( tab[0] == -1 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
+bool Equal(int tabFirst[], int tabSec[]) {
+    return find_size(tabFirst) == find_size(tabSec) && Subset(tabFirst, tabSec);    
 }
 
-bool Nonempty ( int tab[] ) {
-    if ( tab[0] != -1 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
+bool Empty(int array[]) {
+    return array[0] == -1;
 }
 
-double Arithmetic ( int tab[] ) {
-    int roz;
-    int i = 0;
-    int suma = 0;
-    double main;
-    if ( tab[0] != -1 ) {
-        while ( tab[i] != -1 ) {
-            i++;
-        }
-        roz = i;
-        for ( i = 0; i < roz; i++ ) {
-            suma = suma + tab[i];
-        }
-        main = suma * 1.0 / roz * 1.0;
-    }
-    else {
-        main = 0;
-    }
-    return main;
+bool Nonempty(int array[]) {
+    return !Empty(array);
 }
 
-double Harmonic ( int tab[] ) {
-    int roz;
-    int i = 0;
-    int suma = 0;
-    double mianownik = 0;
-    double main;
-    if ( tab[0] != -1 ) {
-        while ( tab[i] != -1 ) {
-            i++;
-        }
-        roz = i;
-        for ( i = 0; i < roz; i++ ) {
-            mianownik = mianownik + ( 1.0 / tab[i] ) ;
-        }
-        main = roz / mianownik * 1.0;
+double Arithmetic(int array[]) {
+
+    int size = find_size(array);
+    int sum = 0;
+
+    if (size == 0) {
+        return 0;
     }
-    else {
-        main = 1;
+
+    for (int i = 0; i < size; i++) {
+        sum += array[i];
     }
-    return main;
+    return sum * 1.0 / size * 1.0;
 }
 
-bool Element ( int liczba, int tab[] ) {
-    bool cond = false;
-    int roz;
-    int i = 0;
-    while ( tab[i] != -1 ) {
-        i++;
+double Harmonic(int array[]) {
+
+    int size = find_size(array);
+    int sum = 0;
+
+    if (size == 0) {
+        return 1;
     }
-    roz = i;
-    for ( int i = 0; i < roz; i++ ) {
-        if ( liczba == tab[i] ) {
-            cond = true;
-            break;
-        }
+
+    int sum = 0;
+    double denom = 0;
+
+    for (int i = 0; i < size; i++) {
+        denom += (1.0 / array[i]) ;
     }
-    return cond;
+    return size / denom * 1.0;
 }
 
-void MinMax ( int tab[], int* min, int& max ) {
-    if ( tab[0] != -1 ) {
+bool Element(int number, int array[]) {
+    int number_arrayed[1] = {number};
+    return Subset(number_arrayed, array);
+}
+
+void MinMax(int array[], int* min, int& max) {
+    if (array[0] != -1) {
+
     	*min = 4095;
     	max = 1;
-        int roz;
-        int i = 0;
-        while ( tab[i] != -1 ) {
-            i++;
-        }
-        roz = i;
-        for ( i = 0; i < roz; i++ ) {
-            if ( tab[i] < *min ) {
-                *min = tab[i];
+        int size = find_size(array);
+
+        for (int i = 0; i < size; i++ ) {
+            if (array[i] < *min) {
+                *min = array[i];
             }
-            if ( tab[i] > max ) {
-                max = tab[i];
+            if (array[i] > max) {
+                max = array[i];
             }
         }
     }
 }
 
-void Cardinality ( int tab[], int* power ) {
-    int i = 0;
-    while ( tab[i] != -1 ) {
-        i++;
-    }
-    *power = i;
+void Cardinality(int array[], int* card) {
+    *card = find_size(array);
 }
 
-void Properties ( int tab[], char prop[], double& arith, double* harm, int& min, int* max, int& power ) {
-    for ( int i = 0; prop[i] != 0; i++ ) {
-        if ( prop[i] == 'a' ) {
-            arith = Arithmetic ( tab );
-        }
-        if ( prop[i] == 'h' ) {
-            *harm = Harmonic ( tab );
-        }
-        if ( prop[i] == 'm' ) {
-            MinMax ( tab, &min, *max );
-        }
-        if ( prop [i] == 'c' ) {
-            Cardinality ( tab, &power );
+void Properties(int array[], char operations[], double& arith, double* harm, int& min, int* max, int& card) {
+    for (int i = 0; operations[i] != 0; i++) {
+        switch (operations[i]) {
+            case 'a':
+                arith = Arithmetic(array);
+                break;
+            case 'h':
+                *harm = Harmonic(array);
+                break;
+            case 'm':
+                MinMax(array, &min, *max);
+                break;
+            case 'c':
+                Cardinality(array, &card);
+                break;
+            default:
+                break;
         }
     }
 }
