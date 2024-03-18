@@ -197,7 +197,6 @@ int main () {
             operateGamer(secGamer, secWon, secLost, secTie);
         }
         else {
-            
             return 1;
         }
         numOfGames--;

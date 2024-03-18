@@ -1,12 +1,12 @@
 # C++ minor projects
 Prepared for programming course in C++. Instructions can be found in PDF format in the subdirectories.
 
+
 ## 01-poker
 Simplified poker game, designed to process the console input from user.
 
-
 ## 02-array-operations
-Program designed for performing basic modifications on arrays of integers (rotating, switching pairs, shifting). Can be used eg. for creating passwords with a private key.
+Program designed for performing basic modifications on arrays of integers (rotating, switching pairs, shifting). Can be used for eg. creating passwords with a private key.
 
 ## 03-collections
 Simple set handler for creating, comparing, modification and performing basic operations on sets conatining integers.
@@ -27,4 +27,4 @@ Input-output operations on files containg pieces of data in a particular format 
 Binary implementation of sets represented by five-element character chains of 0 and 1s. Enables binary operations, comparing sets and checking various properties.
 
 ## 09-fruit-garden
-Program designed for handling nested structure of classes implementg a fruit garden.
+Program designed for handling nested structure of classes implementing a fruit garden.
