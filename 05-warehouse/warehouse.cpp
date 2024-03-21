@@ -3,10 +3,18 @@ struct PLACE {
     char id1;
     char id2;
 
-    void ZERO_PLACE() {
+    void clean_place() {
         amount = 0;
         id1 = '\0';
         id2 = '\0';
+    }
+    void set_place(unsigned short new_amount) {
+        amount = new_amount;
+        id1 = '\0';
+        id2 = '\0';
+    }
+    void set_amount(unsigned short new_amount) {
+        amount = new_amount;
     }
 };
 
