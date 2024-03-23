@@ -10,7 +10,7 @@ unsigned short PLACE_CAPACITY = 65535;
 
 
 bool in_range(unsigned short value, unsigned short upper) {
-    return 0 <= value < upper;
+    return (value >= 0 && value < upper);
 }
 
 void delete_from_place(unsigned short w, unsigned short r, unsigned short s, unsigned short p) {
@@ -44,29 +44,27 @@ void set_ap(int w, int r, int s, int p) {
 void set_as(int w, int r, int s, int p) {
     if (in_range(w, store.usedwarehouses) && in_range(r, store.warehouses[w].usedracks) &&
         in_range(s, CAPACITY + 1) && in_range(p, CAPACITY + 1)) {
-
-        // int n = in_range(s, store.warehouses[w].racks[r].usedshelves) ? s : store.warehouses[w].racks[r].usedshelves;
         for (int i = 0; i < min(s, store.warehouses[w].racks[r].usedshelves); i++) {
             if (store.warehouses[w].racks[r].shelves[i].usedplaces > p) {
                 for (int j = p; j < store.warehouses[w].racks[r].shelves[i].usedplaces; j++) {
                     delete_from_place(w, r, i, j);
                 }
+                store.warehouses[w].racks[r].shelves[i].usedplaces = p;
             }
-            store.warehouses[s].racks[r].shelves[i].usedplaces = p;
         }
         if (store.warehouses[w].racks[r].usedshelves < s) {
             for (int i = store.warehouses[w].racks[r].usedshelves; i < s; i++) {
-                store.warehouses[s].racks[r].shelves[i].usedplaces = p;
+                store.warehouses[w].racks[r].shelves[i].usedplaces = p;
             }
         }
         else {
             for (int i = s; i < store.warehouses[w].racks[r].usedshelves; i++) {
-                for (int j = 0; j < store.warehouses[s].racks[r].shelves[i].usedplaces; j++) {
-                    // set_ap(w, r, i, j);
-                    delete_from_place(s, r, i, j);
+                for (int j = 0; j < store.warehouses[w].racks[r].shelves[i].usedplaces; j++) {
+                    delete_from_place(w, r, i, j);
                 }
-                store.warehouses[s].racks[r].shelves[i].usedplaces = 0;
+                store.warehouses[w].racks[r].shelves[i].usedplaces = 0;
             }
+            store.warehouses[w].racks[r].usedshelves = s;
         }
     }
     else {
@@ -76,14 +74,27 @@ void set_as(int w, int r, int s, int p) {
 
 void set_ar(int w, int r, int s, int p) {
     if (in_range(w, store.usedwarehouses) && in_range(r, CAPACITY + 1) && in_range(s, CAPACITY + 1) && in_range(p, CAPACITY + 1)) {
-        for (int i = r; i < max(r, store.warehouses[w].usedracks); i++) {
-            for (int j = 0; j < max(s, store.warehouses[w].racks[i].usedshelves); j++) {
-                for (int k = 0; k < max(p, store.warehouses[w].racks[i].shelves[j].usedplaces); k++) {
-                    delete_from_place(w, i, j, k);
+        for (int i = 0; i < min(r, store.warehouses[w].usedracks); i++) {
+            set_as(w, i, s, p);
+        }
+        if (store.warehouses[w].usedracks < r) {
+            for (int i = store.warehouses[w].usedracks; i < r; i++) {
+                store.warehouses[w].racks[i].usedshelves = s;
+                for (int j = 0; j < store.warehouses[w].racks[i].usedshelves; j++) {
+                    store.warehouses[w].racks[i].shelves[j].usedplaces = p;
                 }
-                store.warehouses[w].racks[i].shelves[j].usedplaces = p;
             }
-            store.warehouses[w].racks[i].usedshelves = s;
+        }
+        else {
+            for (int i = r; i < store.warehouses[w].usedracks; i++) {
+                for (int j = 0; j < store.warehouses[w].racks[i].usedshelves; j++) {
+                    for (int k = 0; k < store.warehouses[w].racks[i].shelves[j].usedplaces; k++) {
+                        delete_from_place(w, i, j, k);
+                    }
+                    store.warehouses[w].racks[i].shelves[j].usedplaces = 0;
+                }
+                store.warehouses[w].racks[i].usedshelves = 0;
+            }
         }
         store.warehouses[w].usedracks = r;
     }
