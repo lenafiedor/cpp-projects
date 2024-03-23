@@ -11,7 +11,7 @@ Program designed for performing basic modifications on arrays of integers (rotat
 ## 03-collections
 Simple set handler for creating, comparing, modification and performing basic operations on sets conatining integers.
 
-## data-cube
+## 04-data-cube
 Virtual representation of a three-dimensional array. Implemented features are: intersection with a cuboid, tetrahedron and octal and determinant of a chosen slice (two-dimensional array).
 
 ## 05-warehouse
