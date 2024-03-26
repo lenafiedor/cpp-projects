@@ -56,12 +56,12 @@ int main () {
             cin >> w >> p;
             set_hw(w, p);
         }
-        else if(command == "SET-HR") {
+        else if (command == "SET-HR") {
             int s, p;
             cin >> s >> p;
             set_hr(s, p);
         }
-        else if(command == "SET-HS") {
+        else if (command == "SET-HS") {
             int p;
             cin >> p;
             set_hs(p);
@@ -122,21 +122,21 @@ int main () {
         }
 
         else if (command == "MOV-W") {
-            int w1, r1, s1, w2, r2, s2, p, a;
-            cin >> w1 >> r1 >> s1 >> w2 >> r2 >> s2 >> p >> a;
-            mov_w (w1, r1, s1, w2, r2, s2, p, a);
+            int w_b, r_b, s_b, w_e, r_e, s_e, p, a;
+            cin >> w_b >> r_b >> s_b >> w_e >> r_e >> s_e >> p >> a;
+            mov_w (w_b, r_b, s_b, w_e, r_e, s_e, p, a);
         }
 
         else if (command == "MOV-H") {
             int w, r, s, p, a;
             cin >> w >> r >> s >> p >> a;
-            mov_h(w, r, s, p , a);
+            mov_h(w, r, s, p, a);
         }
 
         else if (command == "MOV-R") {
-            int w, r, s1, s2, p, a;
-            cin >> w >> r >> s1 >> s2 >> p >> a;
-            mov_r(w, r, s1, s2, p, a);
+            int w, r, s_b, s_e, p, a;
+            cin >> w >> r >> s_b >> s_e >> p >> a;
+            mov_r(w, r, s_b, s_e, p, a);
         }
 
         else if (command == "MOV-S") {
@@ -146,7 +146,7 @@ int main () {
         }
 
         else if (command == "GET-E") {
-            cout << sum << endl;
+            get_e();
         }
 
         else if (command == "GET-W") {
@@ -189,58 +189,54 @@ int main () {
 
         else if (command == "SET-LW") {
             int w, r, s, p;
-            char d[2];
-            cin >> w >> r >> s >> p >> d[0] >> d[1];
-            store.warehouses[w].racks[r].shelves[s].places[p].id1 = d[0];
-            store.warehouses[w].racks[r].shelves[s].places[p].id2 = d[1];
+            char id[2];
+            cin >> w >> r >> s >> p >> id[0] >> id[1];
+            set_lw(w, r, s, p, id);
         }
 
         else if (command == "SET-LH") {
             int w, p;
-            char d[2];
-            cin >> w >> p >> d[0] >> d[1];
-            store.warehouses[w].handyshelf.places[p].id1 = d[0];
-            store.warehouses[w].handyshelf.places[p].id2 = d[1];
+            char id[2];
+            cin >> w >> p >> id[0] >> id[1];
+            set_lh(w, p, id);
         }
 
         else if (command == "SET-LR") {
             int s, p;
-            char d[2];
-            cin >> s >> p >> d[0] >> d[1];
-            store.handyrack.shelves[s].places[p].id1 = d[0];
-            store.handyrack.shelves[s].places[p].id2 = d[1];
+            char id[2];
+            cin >> s >> p >> id[0] >> id[1];
+            set_lr(s, p, id);
         }
 
         else if (command == "SET-LS") {
             int p;
-            char d[2];
-            cin >> p >> d[0] >> d[1];
-            store.handyshelf.places[p].id1 = d[0];
-            store.handyshelf.places[p].id2 = d[1];
+            char id[2];
+            cin >> p >> id[0] >> id[1];
+            set_ls(p, id);
         }
 
         else if (command == "GET-LW") {
             int w, r, s, p;
             cin >> w >> r >> s >> p;
-            cout << store.warehouses[w].racks[r].shelves[s].places[p].id1 << store.warehouses[w].racks[r].shelves[s].places[p].id2 << endl;
+            get_lw(w, r, s, p);
         }
 
         else if (command == "GET-LH") {
             int w, p;
             cin >> w >> p;
-            cout << store.warehouses[w].handyshelf.places[p].id1 << store.warehouses[w].handyshelf.places[p].id2 << endl;
+            get_lh(w, p);
         }
 
         else if (command == "GET-LR") {
             int s, p;
             cin >> s >> p;
-            cout << store.handyrack.shelves[s].places[p].id1 << store.handyrack.shelves[s].places[p].id2 << endl;
+            get_lr(s, p);
         }
 
         else if (command == "GET-LS") {
             int p;
             cin >> p;
-            cout << store.handyshelf.places[p].id1 << store.handyshelf.places[p].id2 << endl;
+            get_ls(p);
         }
     }
     return 0;

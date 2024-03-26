@@ -1,3 +1,5 @@
+using namespace std;
+
 struct PLACE {
     unsigned short amount;
     char id1;
@@ -8,13 +10,29 @@ struct PLACE {
         id1 = '\0';
         id2 = '\0';
     }
+
     void set_place(unsigned short new_amount) {
         amount = new_amount;
         id1 = '\0';
         id2 = '\0';
     }
+
     void set_amount(unsigned short new_amount) {
         amount = new_amount;
+    }
+
+    void set_label(char id[]) {
+        id1 = id[0];
+        id2 = id[1];
+    }
+
+    void print_label() {
+        if (id1 == id2 == '\0') {
+            cout << "--" << endl;
+        }
+        else {
+            cout << id1 << id2 << endl;
+        }
     }
 };
 

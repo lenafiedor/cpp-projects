@@ -26,6 +26,17 @@ int max(int firstValue, int secondValue) {
     return firstValue >= secondValue ? firstValue : secondValue;
 }
 
+void move_items(unsigned short& amount_source, unsigned short& amount_dest, int& new_amount) {
+    if (amount_source < new_amount) {
+            new_amount = amount_source;
+        }
+    if (amount_source + new_amount > PLACE_CAPACITY) {
+        new_amount = PLACE_CAPACITY - amount_source;
+    }
+    amount_source -= new_amount;
+    amount_dest += new_amount;
+}
+
 void set_ap(int w, int r, int s, int p) {
     if (in_range(w, store.usedwarehouses) && in_range(r, store.warehouses[w].usedracks) &&
         in_range(s, store.warehouses[w].racks[r].usedshelves) && in_range(p, CAPACITY + 1)) {
@@ -177,11 +188,11 @@ void set_hs(int p) {
 }
 
 void put_w(int w, int r, int s, int p, int a) { 
-    if (in_range(w, store.usedwarehouses) && in_range(r, store.warehouses[r].usedracks) &&
+    if (in_range(w, store.usedwarehouses) && in_range(r, store.warehouses[w].usedracks) &&
         in_range(s, store.warehouses[w].racks[r].usedshelves) && in_range(p, store.warehouses[w].racks[r].shelves[s].usedplaces)) {
-        if (store.warehouses[w].racks[r].shelves[s].places[p].amount + a > 65535) {
-            store.warehouses[w].racks[r].shelves[s].places[p].amount = 65535;
-            sum += 65535;
+        if (store.warehouses[w].racks[r].shelves[s].places[p].amount + a > PLACE_CAPACITY) {
+            store.warehouses[w].racks[r].shelves[s].places[p].amount = PLACE_CAPACITY;
+            sum += PLACE_CAPACITY;
         }
         else {
             store.warehouses[w].racks[r].shelves[s].places[p].amount += a;
@@ -195,9 +206,9 @@ void put_w(int w, int r, int s, int p, int a) {
 
 void put_h(int w, int p, int a) {  
     if (in_range(w, store.usedwarehouses) && in_range(p, store.warehouses[w].handyshelf.usedplaces)) {
-        if (store.warehouses[w].handyshelf.places[p].amount + a > 65535) {
-            store.warehouses[w].handyshelf.places[p].amount = 65535;
-            sum += 65535;
+        if (store.warehouses[w].handyshelf.places[p].amount + a > PLACE_CAPACITY) {
+            store.warehouses[w].handyshelf.places[p].amount = PLACE_CAPACITY;
+            sum += PLACE_CAPACITY;
         }
         else {
             store.warehouses[w].handyshelf.places[p].amount += a;
@@ -210,10 +221,10 @@ void put_h(int w, int p, int a) {
 }
 
 void put_r(int s, int p, int a) {  
-    if (in_range(s, store.handyshelf.usedplaces)) {
-        if (store.handyrack.shelves[s].places[p].amount + a > 65535) {
-            store.handyrack.shelves[s].places[p].amount = 65535;
-            sum = +65535;
+    if (in_range(s, store.handyrack.usedshelves) && in_range(p, store.handyrack.shelves[s].usedplaces)) {
+        if (store.handyrack.shelves[s].places[p].amount + a > PLACE_CAPACITY) {
+            store.handyrack.shelves[s].places[p].amount = PLACE_CAPACITY;
+            sum += PLACE_CAPACITY;
         }
         else {
             store.handyrack.shelves[s].places[p].amount += a;
@@ -227,9 +238,9 @@ void put_r(int s, int p, int a) {
 
 void put_s(int p, int a) { 
     if (in_range(p, store.handyshelf.usedplaces)) {
-        if (store.handyshelf.places[p].amount + a > 65535) {
-            store.handyshelf.places[p].amount = 65535;
-            sum += 65535;
+        if (store.handyshelf.places[p].amount + a > PLACE_CAPACITY) {
+            store.handyshelf.places[p].amount = PLACE_CAPACITY;
+            sum += PLACE_CAPACITY;
         }
         else {
             store.handyshelf.places[p].amount += a;
@@ -311,9 +322,9 @@ void fill(int w, int r, int s, int p, int a) {
 }
 
 void pop_w(int w, int r, int s, int p, int a) {
-    if ( ( w < store.usedwarehouses ) && ( r < store.warehouses[r].usedracks ) && ( s < store.warehouses[w].racks[r].usedshelves )
-    && ( p < store.warehouses[w].racks[r].shelves[s].usedplaces ) ) {
-        if ( store.warehouses[w].racks[r].shelves[s].places[p].amount - a < 0 ) {
+    if (in_range(w, store.usedwarehouses) && in_range(r, store.warehouses[w].usedracks) &&
+        in_range(s, store.warehouses[w].racks[r].usedshelves) && in_range(p, store.warehouses[w].racks[r].shelves[s].usedplaces)) {
+        if (store.warehouses[w].racks[r].shelves[s].places[p].amount - a < 0) {
             sum -= store.warehouses[w].racks[r].shelves[s].places[p].amount;
             store.warehouses[w].racks[r].shelves[s].places[p].amount = 0;
         }
@@ -328,8 +339,8 @@ void pop_w(int w, int r, int s, int p, int a) {
 }
 
 void pop_h(int w, int p, int a) {
-    if ( ( w < store.usedwarehouses ) && ( p < store.warehouses[w].handyshelf.usedplaces ) ) {
-        if ( store.warehouses[w].handyshelf.places[p].amount - a < 0 ) {
+    if (in_range(w, store.usedwarehouses) && in_range(p, store.warehouses[w].handyshelf.usedplaces)) {
+        if (store.warehouses[w].handyshelf.places[p].amount - a < 0) {
             sum -= store.warehouses[w].handyshelf.places[p].amount;
             store.warehouses[w].handyshelf.places[p].amount = 0;
         }
@@ -344,8 +355,8 @@ void pop_h(int w, int p, int a) {
 }
 
 void pop_r(int s, int p, int a) {
-    if ( ( s < store.handyrack.usedshelves ) && ( p < store.handyrack.shelves[s].usedplaces ) ) {
-        if ( store.handyrack.shelves[s].places[p].amount - a < 0 ) {
+    if (in_range(s, store.handyrack.usedshelves) && in_range(p, store.handyrack.shelves[s].usedplaces)) {
+        if (store.handyrack.shelves[s].places[p].amount - a < 0) {
             sum -= store.handyrack.shelves[s].places[p].amount;
             store.handyrack.shelves[s].places[p].amount = 0;
         }
@@ -360,8 +371,8 @@ void pop_r(int s, int p, int a) {
 }
 
 void pop_s(int p, int a) {
-    if ( p < store.handyshelf.usedplaces ) {
-        if ( store.handyshelf.places[p].amount - a < 0 ) {
+    if (in_range(p, store.handyshelf.usedplaces)) {
+        if (store.handyshelf.places[p].amount - a < 0) {
             store.handyshelf.places[p].amount = 0;
             sum -= store.handyshelf.places[p].amount;
         }
@@ -370,30 +381,69 @@ void pop_s(int p, int a) {
             sum -= a;
         }
     }
+    else {
+        cout << "error" << endl;
+    }
 }
 
-void mov_w(int w1, int r1, int s1, int w2, int r2, int s2, int p, int a) {
-    // body
+void mov_w(int w_b, int r_b, int s_b, int w_e, int r_e, int s_e, int p, int a) {
+    if (in_range(w_b, store.usedwarehouses) && in_range(w_e, store.usedwarehouses) &&
+        in_range(r_b, store.warehouses[w_b].usedracks) && in_range(r_e, store.warehouses[w_e].usedracks) &&
+        in_range(s_b, store.warehouses[w_b].racks[r_b].usedshelves) && in_range(s_e, store.warehouses[w_e].racks[r_e].usedshelves) &&
+        in_range(p, store.warehouses[w_b].racks[r_b].shelves[s_b].usedplaces) && in_range(p, store.warehouses[w_e].racks[r_e].shelves[s_e].usedplaces)) {
+        
+        move_items(store.warehouses[w_b].racks[r_b].shelves[s_b].places[p].amount, store.warehouses[w_e].racks[r_e].shelves[s_e].places[p].amount, a);
+    }
+    else {
+        cout << "error" << endl;
+    }
 }
 
 void mov_h(int w, int r, int s, int p, int a) {
-    // body
+    if (in_range(w, store.usedwarehouses) && in_range(r, store.warehouses[w].usedracks) &&
+        in_range(s, store.warehouses[w].racks[r].usedshelves) && in_range(p, store.warehouses[w].racks[r].shelves[s].usedplaces) &&
+        in_range(p, store.warehouses[w].handyshelf.usedplaces)) {
+
+        move_items(store.warehouses[w].racks[r].shelves[s].places[p].amount, store.warehouses[w].handyshelf.places[p].amount, a);
+    }
+    else {
+        cout << "error" << endl;
+    }
 }
 
-void mov_r(int w, int r, int s1, int s2, int p, int a) {
-    // body
+void mov_r(int w, int r, int s_b, int s_e, int p, int a) {
+    if (in_range(w, store.usedwarehouses) && in_range(r, store.warehouses[w].usedracks) &&
+        in_range(s_b, store.warehouses[w].racks[r].usedshelves) && in_range(p, store.warehouses[w].racks[r].shelves[s_b].usedplaces) &&
+        in_range(s_e, store.handyrack.usedshelves) && in_range(p, store.handyrack.shelves[s_e].usedplaces)) {
+        
+        move_items(store.warehouses[w].racks[r].shelves[s_b].places[p].amount, store.handyrack.shelves[s_e].places[p].amount, a);
+    }
+    else {
+        cout << "error" << endl;
+    }
 }
 
 void mov_s(int s, int p, int a) {
-    // body
+    if (in_range(s, store.handyrack.usedshelves) && in_range(p, store.handyrack.shelves[s].usedplaces) &&
+        in_range(p, store.handyshelf.usedplaces)) {
+        
+        move_items(store.handyrack.shelves[s].places[p].amount, store.handyshelf.places[p].amount, a);
+    }
+    else {
+        cout << "error" << endl;
+    }
+}
+
+void get_e() {
+    cout << sum << endl;
 }
 
 void get_w(int w) {
-    if ( w < store.usedwarehouses ) {
+    if (in_range(w, store.usedwarehouses)) {
         long long quantity = 0;
-        for ( int i = 0; i < store.warehouses[w].usedracks; i++ ) {
-            for ( int j = 0; j < store.warehouses[w].racks[i].usedshelves; j++ ) {
-                for ( int k = 0; k < store.warehouses[w].racks[i].shelves[j].usedplaces; k++ ) {
+        for (int i = 0; i < store.warehouses[w].usedracks; i++) {
+            for (int j = 0; j < store.warehouses[w].racks[i].usedshelves; j++) {
+                for (int k = 0; k < store.warehouses[w].racks[i].shelves[j].usedplaces; k++) {
                     quantity += store.warehouses[w].racks[i].shelves[j].places[k].amount;
                 }
             }
@@ -406,11 +456,11 @@ void get_w(int w) {
 }
 
 void get_rw(int w, int r) {
-    if ( w < store.usedwarehouses && r < store.warehouses[w].usedracks ) {
+    if (in_range(w, store.usedwarehouses) && in_range(r, store.warehouses[w].usedracks)) {
         long long quantity = 0;
-        for ( int i = 0; i < store.warehouses[w].racks[r].usedshelves; i++ ) {
-            for ( int j = 0; j < store.warehouses[w].racks[r].shelves[j].usedplaces; j++ ) {
-                quantity += store.warehouses[w].racks[r].shelves[j].places[j].amount;
+        for (int i = 0; i < store.warehouses[w].racks[r].usedshelves; i++) {
+            for (int j = 0; j < store.warehouses[w].racks[r].shelves[i].usedplaces; j++) {
+                quantity += store.warehouses[w].racks[r].shelves[i].places[j].amount;
             }
         }
         cout << quantity << endl;
@@ -422,8 +472,8 @@ void get_rw(int w, int r) {
 
 void get_rh() {
     long long quantity = 0;
-    for ( int i = 0; i < store.handyrack.usedshelves; i++ ) {
-        for ( int j = 0; j < store.handyrack.shelves[i].usedplaces; j++ ) {
+    for (int i = 0; i < store.handyrack.usedshelves; i++) {
+        for (int j = 0; j < store.handyrack.shelves[i].usedplaces; j++) {
             quantity += store.handyrack.shelves[i].places[j].amount;
         }
     }
@@ -431,9 +481,9 @@ void get_rh() {
 }
 
 void get_sw(int w, int r, int s) {
-    if ( w < store.usedwarehouses && r < store.warehouses[w].usedracks && s < store.warehouses[w].racks[r].usedshelves ) {
+    if (in_range(w, store.usedwarehouses) && in_range(r, store.warehouses[w].usedracks) && in_range(s, store.warehouses[w].racks[r].usedshelves)) {
         long long quantity = 0;
-        for ( int i = 0; i < store.warehouses[w].racks[r].shelves[s].usedplaces; i++ ) {
+        for (int i = 0; i < store.warehouses[w].racks[r].shelves[s].usedplaces; i++) {
             quantity += store.warehouses[w].racks[r].shelves[s].places[i].amount;
         }
         cout << quantity << endl;
@@ -444,7 +494,7 @@ void get_sw(int w, int r, int s) {
 }
 
 void get_sh(int w) {
-    if ( w < store.usedwarehouses ) {
+    if (in_range(w, store.usedwarehouses)) {
         long long quantity = 0;
         for (int i = 0; i < store.warehouses[w].handyshelf.usedplaces; i++) {
             quantity += store.warehouses[w].handyshelf.places[i].amount;
@@ -457,9 +507,9 @@ void get_sh(int w) {
 }
 
 void get_sr(int s) {
-    if ( s < store.handyrack.usedshelves ) {
+    if (in_range(s, store.handyrack.usedshelves)) {
         long long quantity = 0;
-        for ( int i = 0; i < store.handyrack.shelves[s].usedplaces; i++ ) {
+        for (int i = 0; i < store.handyrack.shelves[s].usedplaces; i++) {
             quantity += store.handyrack.shelves[s].places[i].amount;
         }
         cout << quantity << endl;
@@ -471,8 +521,82 @@ void get_sr(int s) {
 
 void get_s() {
     long long quantity = 0;
-    for ( int i = 0; i < store.handyshelf.usedplaces; i++ ) {
+    for (int i = 0; i < store.handyshelf.usedplaces; i++) {
         quantity += store.handyshelf.places[i].amount;
     }
     cout << quantity << endl;
+}
+
+void set_lw(int w, int r, int s, int p, char id[]) {
+    if (in_range(w, store.usedwarehouses) && in_range(r, store.warehouses[w].usedracks)
+        && in_range(s, store.warehouses[w].racks[r].usedshelves) && in_range(p, store.warehouses[w].racks[r].shelves[s].usedplaces)) {
+        store.warehouses[w].racks[r].shelves[s].places[p].set_label(id);
+    }
+    else {
+        cout << "error" << endl;
+    }
+}
+
+void set_lh(int w, int p, char id[]) {
+    if (in_range(w, store.usedwarehouses) && in_range(p, store.warehouses[w].handyshelf.usedplaces)) {
+        store.warehouses[w].handyshelf.places[p].set_label(id);
+    }
+    else {
+        cout << "error" << endl;
+    }
+}
+
+void set_lr(int s, int p, char id[]) {
+    if (in_range(s, store.handyrack.usedshelves) && in_range(p, store.handyrack.shelves[s].usedplaces)) {
+        store.handyrack.shelves[s].places[p].set_label(id);
+    }
+    else {
+        cout << "error" << endl;
+    }
+}
+
+void set_ls(int p, char id[]) {
+    if (in_range(p, store.handyshelf.usedplaces)) {
+        store.handyshelf.places[p].set_label(id);
+    }
+    else {
+        cout << "error" << endl;
+    }
+}
+
+void get_lw(int w, int r, int s, int p) {
+    if (in_range(w, store.usedwarehouses) && in_range(r, store.warehouses[w].usedracks)
+        && in_range(s, store.warehouses[w].racks[r].usedshelves) && in_range(p, store.warehouses[w].racks[r].shelves[s].usedplaces)) {
+        store.warehouses[w].racks[r].shelves[s].places[p].print_label();
+    }
+    else {
+        cout << "error" << endl;
+    }
+}
+
+void get_lh(int w, int p) {
+    if (in_range(w, store.usedwarehouses) && in_range(p, store.warehouses[w].handyshelf.usedplaces)) {
+        store.warehouses[w].handyshelf.places[p].print_label();
+    }
+    else {
+        cout << "error" << endl;
+    }
+}
+
+void get_lr(int s, int p) {
+    if (in_range(s, store.handyrack.usedshelves) && in_range(p, store.handyrack.shelves[s].usedplaces)) {
+        store.handyrack.shelves[s].places[p].print_label();
+    }
+    else {
+        cout << "error" << endl;
+    }
+}
+
+void get_ls(int p) {
+    if (in_range(p, store.handyshelf.usedplaces)) {
+        store.handyshelf.places[p].print_label();
+    }
+    else {
+        cout << "error" << endl;
+    }
 }
