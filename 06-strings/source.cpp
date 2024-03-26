@@ -1,35 +1,36 @@
 #include <string>
+
 using namespace std;
 
-bool condition ( string final ) {
-    for ( int i = 0; i < final.size(); i++ ) {
-        if ( final[i] == '{' ) {
+bool condition(string final) {
+    for (int i = 0; i < final.size(); i++) {
+        if (final[i] == '{') {
             return false;
         }
     }
     return true;        
 }
 
-void fill ( string s, string& final, int begin, int end ) {
+void fill(string s, string& final, int begin, int end) {
     for ( int i = begin; i < end; i++ ) {
         final += s[i];
     }
     begin = end;
 }
 
-void change ( string s, string& final, string ins ) {
+void change(string s, string& final, string ins) {
     final += ins;
 }
 
-void rangeChange ( string s, string& final, string ins, int index ) {
-    if ( ( s[index + 4] - '0' ) > ins.size() ) {
+void rangeChange(string s, string& final, string ins, int index) {
+    if ((s[index + 4] - '0') > ins.size()) {
         final += ins;
-        for ( int i = s[index + 4] - '0'; i > ins.size(); i-- ) {
+        for (int i = s[index + 4] - '0'; i > ins.size(); i--) {
             final += ' ';
         }
     }
-    else if ( ( s[index + 4] - '0' ) < ins.size() ) {
-        for ( int i = 0; i < s[index + 4] - '0'; i++ ) {
+    else if ((s[index + 4] - '0') < ins.size()) {
+        for (int i = 0; i < s[index + 4] - '0'; i++) {
             final += ins[i];
         }
     }
@@ -38,74 +39,68 @@ void rangeChange ( string s, string& final, string ins, int index ) {
     }
 }
 
-int begin ( string s, int begin, int end ) {
+int begin(string s, int begin, int end) {
     int index;
-    for ( index = begin; index < end; index++ ) {
-        if ( s[index] == '{' ) {
+    for (index = begin; index < end; index++) {
+        if (s[index] == '{') {
             break;
         }
     }
     return index;
 }
 
-bool white ( string s, int index ) {
-    if ( ( s[index] == ' ' ) || ( s[index] == '\n' ) )
-    return true;
-    else return false;
+bool white(string s, int index) {
+    return (s[index] == ' ' || s[index] == '\n');
 }
 
-void tempCorrection ( string s, string& temp, int position ) {
+void tempCorrection(string s, string& temp, int position) {
     temp = "";
-    for ( int i = position; i < s.size(); i++ ) {
+    for (int i = position; i < s.size(); i++) {
         temp += s[i];
     }
 }
 
-string FormatujNapis ( string s, string first, string second, string third ) {
+string FormatujNapis(string s, string first, string second, string third) {
     string final = "";
     string temp = s;
     int position = 0;
-    int index = begin ( s, 0, s.size() ) + 1;
+    int index = begin(s, 0, s.size()) + 1;
     do {
-        index = begin ( s, position, s.size() ) + 1;
+        index = begin(s, position, s.size()) + 1;
         int howMany = s[index + 2] - '0';
-        switch ( s[index] ) {
+        switch(s[index]) {
 
-            case 'p':
-            {
+            case 'p': {
                 char sign = s[index + 4];
                 fill ( s, final, position, index - 1 );
                 position = index - 2;
-                for ( int i = 0; i < howMany; i++ ) {
+                for (int i = 0; i < howMany; i++) {
                     final += sign;
                 }
                 position += 8;
             }
             break;
 
-            case 'u':
-            {
-                fill ( s, final, position, index - 1 );
+            case 'u': {
+                fill(s, final, position, index - 1);
                 position = index + 4 + howMany;
             }
             break;
 
-            case 'U':
-            {
-                fill ( s, final, position, index - 1 );
-                if ( howMany > final.size() ) {
-                    final.resize ( 0 );
+            case 'U': {
+                fill (s, final, position, index - 1);
+                if (howMany > final.size()) {
+                    final.resize(0);
                 }
                 else {
-                    final.resize ( final.size() - howMany );
+                    final.resize(final.size() - howMany);
                 }
                 position = index + 4;
             }
             break;
 
-            case 'w':
-            {
-                fill ( s, final, position, index - 1 );
+            case 'w': {
+                fill(s, final, position, index - 1);
                 position = index - 2;
                 int number = s[index + 2] - '0';
                 if ( number == 1 ) {
@@ -121,9 +116,8 @@ string FormatujNapis ( string s, string first, string second, string third ) {
             }
             break;
 
-            case 'W':
-            {
-                fill ( s, final, position, index - 1 );
+            case 'W': {
+                fill(s, final, position, index - 1);
                 int number = s[index + 2] - '0';
                 if ( number == 1 ) {
                     rangeChange ( s, final, first, index );
